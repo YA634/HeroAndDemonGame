@@ -18,7 +18,7 @@ public class Creature {
 	private Map<Param, Integer> parameter = new HashMap<>();
 	private boolean isLive;
 
-	private enum SkillSet {
+	public enum SkillSet {
 		ION("イオナズン"), BKT("バイキルト"), PPT("パルプンテ");
 
 		private final String name;
@@ -37,6 +37,7 @@ public class Creature {
 	public Creature(Category category) {
 		super();
 		this.category = category;
+		this.skillSet = skillSet;
 		this.isLive = true;
 	}
 

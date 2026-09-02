@@ -2,6 +2,8 @@ package heroAndDemon.inputs;
 
 import java.util.Scanner;
 
+import heroAndDemon.models.Creature.SkillSet;
+
 public class InputUtil {
 	private Scanner scan = new Scanner(System.in);
 
@@ -9,9 +11,9 @@ public class InputUtil {
 		scan.close();
 	}
 
-	public String readSkill(String prompt) {
+	public SkillSet readSkill(String prompt) {
 		System.out.println(prompt);
-		return scan.nextLine();
+		return SkillSet.values()[scan.nextInt()];
 	}
 
 	public int readMenuChoice(String prompt) {
