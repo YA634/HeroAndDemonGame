@@ -15,7 +15,8 @@ public class Creature {
 		HP, MP, ATK, DEF, SPD, MAG, LUK
 	}
 
-	private Map<Param, Integer> parameter = new HashMap<>();
+	private Map<Param, Integer> dftParam = new HashMap<>();
+	private Map<Param, Integer> btlParam = new HashMap<>();
 	private boolean isLive;
 
 	public enum SkillSet {
@@ -34,27 +35,34 @@ public class Creature {
 
 	private SkillSet[] skillSet;
 
-	public Creature(Category category) {
+	private String name;
+
+	public Creature(Category category, String name) {
 		super();
 		this.category = category;
-		this.skillSet = skillSet;
+		this.skillSet = new SkillSet[3];
 		this.isLive = true;
+		this.name = name;
 	}
 
-	public Map<Param, Integer> getParameter() {
-		return parameter;
+	public Map<Param, Integer> getDftParam() {
+		return dftParam;
+	}
+
+	public Map<Param, Integer> getBtlParam() {
+		return btlParam;
 	}
 
 	public void showParameter() {
-		System.out.println("== HEROの強さ ==");
+		System.out.println("== " + name + "の強さ ==");
 		System.out.println(
-				"HP: " + parameter.get(Param.HP) +
-						" MP: " + parameter.get(Param.MP) +
-						" ATK: " + parameter.get(Param.ATK) +
-						" DEF: " + parameter.get(Param.DEF) +
-						" MAG: " + parameter.get(Param.MAG) +
-						" SPD: " + parameter.get(Param.SPD) +
-						" LUK: " + parameter.get(Param.LUK));
+				"HP: " + btlParam.get(Param.HP) + "/" + dftParam.get(Param.HP) +
+						" MP: " + btlParam.get(Param.MP) + "/" + dftParam.get(Param.MP) +
+						" ATK: " + btlParam.get(Param.ATK) + "(" + dftParam.get(Param.ATK) + ")" +
+						" DEF: " + btlParam.get(Param.DEF) + "(" + dftParam.get(Param.DEF) + ")" +
+						" MAG: " + btlParam.get(Param.MAG) + "(" + dftParam.get(Param.MAG) + ")" +
+						" SPD: " + btlParam.get(Param.SPD) + "(" + dftParam.get(Param.SPD) + ")" +
+						" LUK: " + btlParam.get(Param.LUK) + "(" + dftParam.get(Param.LUK) + ")");
 	}
 
 	public void setParameter(Category category) {
@@ -69,7 +77,8 @@ public class Creature {
 					Param.SPD, random.nextInt(40) + 60,
 					Param.MAG, random.nextInt(40) + 60,
 					Param.LUK, random.nextInt(20) + 30));
-			this.parameter = parameterD;
+			this.dftParam = parameterD;
+			this.btlParam = parameterD;
 		} else if (category == Category.HERO) {
 			Map<Param, Integer> parameterH = new HashMap<>();
 			parameterH = new HashMap<>(Map.of(
@@ -80,7 +89,8 @@ public class Creature {
 					Param.SPD, random.nextInt(90) + 10,
 					Param.MAG, random.nextInt(90) + 10,
 					Param.LUK, random.nextInt(100) + 10));
-			this.parameter = parameterH;
+			this.dftParam = parameterH;
+			this.btlParam = parameterH;
 		}
 	}
 
@@ -102,5 +112,63 @@ public class Creature {
 
 	public void setCategory(Category category) {
 		this.category = category;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public static Creature createDemon() {
+		Creature demon = new Creature(Creature.Category.DEMON, "魔王");
+		demon.setParameter(Category.DEMON);
+		SkillSet[] skills = new SkillSet[3];
+		Random r = new Random();
+		for (int i = 0; i < demon.getSkillSet().length; i++) {
+			skills[i] = SkillSet.values()[r.nextInt(SkillSet.values().length)];
+		}
+		return demon;
+	}
+
+	public static Creature createHero(String name) {
+		Creature hero = new Creature(Creature.Category.HERO, name);
+		hero.setParameter(Category.HERO);
+		return hero;
+	}
+
+	//	public void useSkill(int skillNum,Creature demon) {
+	//		if (skillNum==1) {
+	//			System.out.println("勇者は魔王に殴りかかった！");
+	//			
+	//		}
+	//		System.out.println();
+	//	}
+
+	public void showAA(String category) {
+		if (category == "demon") {
+			System.out.println("""
+						　　　　　　 , ―-　＿　　　　　　 ＿ -― ､
+						　　　　　　 ヽ　 　　　＼＿＿／　 　 　　ﾉ
+						　　　　　 　 　＼ 　　　　　　　　　　　／
+						　　　　　　　　　 ヽ.　,―､　 ,―､　　/　 　 　　, ―-o､
+						　　　　　　 　 ／　l　|＿_ V＿_ |　/ヽヽ　 　　､三｀　 二つ
+						 　 　　　　 〃　　ヽ八_･_八_･_八/　 ヽヽ　　 　　} （
+						 　 , -l⌒ヽ＼_ 　＿|　,､＿＿,､　|　　 ／―- ､ 　　） ）
+					　 　 |　 ヽ　｀ｰ一´_ 人 ｀二二´ ノ _／○　　　 |,-（ （
+					 　 ￣￣　 　 　 ﾉ) ＼ 　 |　|　 ／　○　 　 ／'V~(￣ヽ
+						　　  l二= 　 　 　 ﾉ　○　＼V／　 ○　 　　 ﾉ 　l_ (　 ｝
+						　　 ( __ -― 7　 /|ヽ　 ○, ― ､○　 　　　 / 　　/ (＿ノ
+						　 　　 　　 ｀-´/　|　 　{（°）}　　　　　 　　 /／|　||
+						　 　 |　 　 　 | /　　 |　　｀ｰ－´　　　　 　 /´　 ﾉ ﾉ|
+						　 　 |　 　 　 /　 　　|　　　　　　　　　　 / 　　{ { |
+						　 　 }　 　　 {　 　 　 ヾ＼　 　　 ＿ノ　　| 　　 | | |
+						　 　 {　 　　|　　　　　 |　　￣￣　　　　　　　  　| | |
+					  		ヽ_ 　 |　　　　　　｀ ――　　　　　 　 　  _| |ノ
+						　 　 （　￣ >―----　　　　　　　　　　　 　 ￣　   | |)
+						　 　　　￣ ｀ ―-――――----――――----------------´￣|」
+
+						                    ⚪️
+						                    大
+									""");
+		}
 	}
 }
