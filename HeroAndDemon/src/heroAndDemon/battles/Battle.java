@@ -5,13 +5,13 @@ import java.util.Random;
 import heroAndDemon.inputs.InputUtil;
 import heroAndDemon.models.Creature;
 import heroAndDemon.models.Creature.Param;
-import heroAndDemon.models.Creature.SkillSet;
+import heroAndDemon.models.Skill;
 
 public class Battle {
-	public boolean start(Creature demon, String name) {
+	public int start(Creature demon, String name) {
 		Creature hero = skillselect(demon, name);
-		int btResult = battle(hero, demon);
-		return hero.isLive();
+		int btlResult = battle(hero, demon);
+		return btlResult;
 	}
 
 	private Creature skillselect(Creature demon, String name) {
@@ -20,12 +20,12 @@ public class Battle {
 		System.out.println();
 		System.out.println("== 取得可能なスキル ==");
 		int indexNum = 0;
-		for (SkillSet skill : SkillSet.values()) {
-			System.out.println((indexNum + 1) + ":" + skill.getname());
+		for (Skill skill : Skill.values()) {
+			System.out.println((indexNum + 1) + ":" + skill.getName());
 			indexNum++;
 		}
 		InputUtil input = new InputUtil();
-		SkillSet[] skillSet = new SkillSet[3];
+		Skill[] skillSet = new Skill[3];
 		for (int i = 0; i < hero.getSkillSet().length; i++) {
 			skillSet[i] = input.readSkill((i + 1) + "つ目のスキルを選択してください");
 			System.out.println(skillSet[i]);
@@ -88,13 +88,20 @@ public class Battle {
 				sleep(1);
 			}
 		}
-		return 1;
+		if (!demon.isLive()) { //勇者勝ち
+			return 1;
+		} else if (!hero.isLive()) { //魔王勝ち
+			return 2;
+		} else { //なし
+			return 3;
+		}
 	}
 
 	private void useSkill(int skillNum, Creature p1, Creature p2) {
 		if (skillNum == 1) {
 			System.out.println(p1.getName() + "は" + p2.getName() + "に殴りかかった！");
-
+			int dmg = dmgJudge(skillNum, skillNum, 1);
+			System.out.println(dmg);
 		}
 	}
 
