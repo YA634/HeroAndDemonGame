@@ -19,28 +19,14 @@ public class Creature {
 	private Map<Param, Integer> btlParam = new HashMap<>();
 	private boolean isLive;
 
-	public enum SkillSet {
-		ION("イオナズン"), BKT("バイキルト"), PPT("パルプンテ");
-
-		private final String name;
-
-		SkillSet(String name) {
-			this.name = name;
-		}
-
-		public String getname() {
-			return name;
-		}
-	};
-
-	private SkillSet[] skillSet;
+	private Skill[] skillSet;
 
 	private String name;
 
 	public Creature(Category category, String name) {
 		super();
 		this.category = category;
-		this.skillSet = new SkillSet[3];
+		this.skillSet = new Skill[3];
 		this.isLive = true;
 		this.name = name;
 	}
@@ -89,6 +75,14 @@ public class Creature {
 					Param.SPD, random.nextInt(90) + 10,
 					Param.MAG, random.nextInt(90) + 10,
 					Param.LUK, random.nextInt(100) + 10));
+			int sp = random.nextInt(7);
+			if (sp == 0) {
+				parameterH.put(Param.HP, parameterH.get(Param.HP) + random.nextInt(8000));
+			} else if (sp == 1) {
+				parameterH.put(Param.MP, parameterH.get(Param.MP) + random.nextInt(8000));
+			} else if (sp == 2) {
+				parameterH.put(Param.ATK, parameterH.get(Param.ATK) + random.nextInt(100));
+			}
 			this.dftParam = parameterH;
 			this.btlParam = parameterH;
 		}
@@ -102,11 +96,11 @@ public class Creature {
 		this.isLive = isLive;
 	}
 
-	public SkillSet[] getSkillSet() {
+	public Skill[] getSkillSet() {
 		return skillSet;
 	}
 
-	public void setSkillSet(SkillSet[] skillSet) {
+	public void setSkillSet(Skill[] skillSet) {
 		this.skillSet = skillSet;
 	}
 
@@ -121,10 +115,10 @@ public class Creature {
 	public static Creature createDemon() {
 		Creature demon = new Creature(Creature.Category.DEMON, "魔王");
 		demon.setParameter(Category.DEMON);
-		SkillSet[] skills = new SkillSet[3];
+		Skill[] skills = new Skill[3];
 		Random r = new Random();
 		for (int i = 0; i < demon.getSkillSet().length; i++) {
-			skills[i] = SkillSet.values()[r.nextInt(SkillSet.values().length)];
+			skills[i] = Skill.values()[r.nextInt(Skill.values().length)];
 		}
 		return demon;
 	}
@@ -134,14 +128,6 @@ public class Creature {
 		hero.setParameter(Category.HERO);
 		return hero;
 	}
-
-	//	public void useSkill(int skillNum,Creature demon) {
-	//		if (skillNum==1) {
-	//			System.out.println("勇者は魔王に殴りかかった！");
-	//			
-	//		}
-	//		System.out.println();
-	//	}
 
 	public void showAA(String category) {
 		if (category == "demon") {
