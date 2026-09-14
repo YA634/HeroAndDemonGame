@@ -3,7 +3,7 @@ package heroAndDemon.inputs;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-import heroAndDemon.models.Creature.SkillSet;
+import heroAndDemon.models.Skill;
 
 public class InputUtil {
 	private Scanner scan = new Scanner(System.in);
@@ -12,15 +12,15 @@ public class InputUtil {
 		scan.close();
 	}
 
-	public SkillSet readSkill(String prompt) {
+	public Skill readSkill(String prompt) {
 		while (true) {
 			System.out.println(prompt);
 			int index = scan.nextInt() - 1;
 			try {
-				if (index >= 0 && index < SkillSet.values().length) {
-					return SkillSet.values()[index];
+				if (index >= 0 && index < Skill.values().length) {
+					return Skill.values()[index];
 				}
-				System.out.println("1~" + (SkillSet.values().length) + "までの数字を入力してください");
+				System.out.println("1~" + (Skill.values().length) + "までの数字を入力してください");
 			} catch (InputMismatchException e) {
 				// TODO: handle exception
 				System.out.println("数字を入力してください");

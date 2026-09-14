@@ -1,17 +1,20 @@
 package heroAndDemon.battles;
 
+import java.util.Map;
 import java.util.Random;
 
 import heroAndDemon.inputs.InputUtil;
 import heroAndDemon.models.Creature;
 import heroAndDemon.models.Creature.Param;
-import heroAndDemon.models.Creature.SkillSet;
+import heroAndDemon.models.Skill;
+import heroAndDemon.models.Skill.Attribute;
+import heroAndDemon.models.Skill.SkillType;
 
 public class Battle {
-	public boolean start(Creature demon, String name) {
+	public int start(Creature demon, String name) {
 		Creature hero = skillselect(demon, name);
-		int btResult = battle(hero, demon);
-		return hero.isLive();
+		int btlResult = battle(hero, demon);
+		return btlResult;
 	}
 
 	private Creature skillselect(Creature demon, String name) {
@@ -20,12 +23,12 @@ public class Battle {
 		System.out.println();
 		System.out.println("== 取得可能なスキル ==");
 		int indexNum = 0;
-		for (SkillSet skill : SkillSet.values()) {
-			System.out.println((indexNum + 1) + ":" + skill.getname());
+		for (Skill skill : Skill.values()) {
+			System.out.println((indexNum + 1) + ":" + skill.getName());
 			indexNum++;
 		}
 		InputUtil input = new InputUtil();
-		SkillSet[] skillSet = new SkillSet[3];
+		Skill[] skillSet = new Skill[3];
 		for (int i = 0; i < hero.getSkillSet().length; i++) {
 			skillSet[i] = input.readSkill((i + 1) + "つ目のスキルを選択してください");
 			System.out.println(skillSet[i]);
@@ -88,17 +91,52 @@ public class Battle {
 				sleep(1);
 			}
 		}
-		return 1;
+		if (!demon.isLive()) { //勇者勝ち
+			return 1;
+		} else if (!hero.isLive()) { //魔王勝ち
+			return 2;
+		} else { //なし
+			return 3;
+		}
 	}
 
 	private void useSkill(int skillNum, Creature p1, Creature p2) {
 		if (skillNum == 1) {
 			System.out.println(p1.getName() + "は" + p2.getName() + "に殴りかかった！");
-
+			int dmg = dmgJudge(p1.getBtlParam().get(Param.ATK), p2.getBtlParam().get(Param.DEF), 1);
+			System.out.println(dmg + "ダメージ！！");
+			p2.setBtlParam(Param.HP, p2.getBtlParam().get(Param.HP) - dmg);
+		} else if (skillNum == 2) {
+			System.out.println(p1.getName() + "は自身の守りを固めた！");
+			p1.setBtlParam(Param.DEF, p1.getBtlParam().get(Param.DEF) * 2);
+			p1.setEfDulation(Skill.MMR, Skill.MMR.getDulation());
+		} else {
+			Skill skill = p1.getSkillSet()[skillNum - 3];
+			System.out.println(p1.getName() + "は" + skill.getName() + "を使った");
+			//色々処理
+			if (skill.getType() == SkillType.ATTACK) {
+				int dmg = dmgJudge(p1.getBtlParam().get(Param.ATK), p2.getBtlParam().get(Param.DEF), skill.getPower());
+				p2.setBtlParam(Param.HP, p2.getBtlParam().get(Param.HP) - dmg);
+			} else if (skill.getType() == SkillType.HEAL) {
+				healAction(p1, skill);
+			} else if (skill.getType() == SkillType.BUFF) {
+				bfAction(p1, skill);
+			} else if (skill.getType() == SkillType.DEBUFF) {
+				dbfAction(p2, skill);
+			} else if (skill.getType() == SkillType.CONERROR) {
+				conErrorAction(p1, p2, skill);
+			} else if (skill.getType() == SkillType.SPECIAL) {
+				specialAction(p1, p2, skill);
+			}
 		}
 	}
 
+	private void useSkill(int skillNum, Creature p1, Creature[] creatures) {
+
+	}
+
 	private void showMenu(int option, Creature hero) {
+		Skill[] skillSet = new Skill[3];
 		if (option == 0) {
 			System.out.println("1:スキル");
 			System.out.println("2:ポーズ");
@@ -111,7 +149,7 @@ public class Battle {
 			System.out.println("2:殴る");
 			System.out.println("3:身を守る");
 			for (int i = 0; i < hero.getSkillSet().length; i++) {
-				System.out.println((4 + i) + ":" + hero.getSkillSet()[i]);
+				System.out.println((4 + i) + ":" + hero.getSkillSet()[i].getName());
 			}
 		} else if (option == 1 || option == 3 || option == 4) {
 
@@ -129,13 +167,90 @@ public class Battle {
 		}
 	}
 
+	private boolean avoidJudge(Creature p1, Creature p2) {
+		Random r = new Random();
+		int p1Spd = p1.getBtlParam().get(Param.SPD) + r.nextInt(30);
+		int p2Spd = p2.getBtlParam().get(Param.SPD) + r.nextInt(30);
+		if (p1Spd > p2Spd + 30) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	private int dmgJudge(int atk, int def, int option) {
+		//クリティカル、オーバークリティカルを追加
 		Random r = new Random();
 		if (option == 1) {
 			int dmg = atk + r.nextInt(100) - def;
 			return dmg;
 		}
 		return 0;
+	}
+
+	private void healAction(Creature p, Skill sk) {
+		int dfHP = p.getDftParam().get(Param.HP);
+		int btHP = p.getBtlParam().get(Param.HP);
+		if (sk.getPower() > 5) {
+			p.setBtlParam(Param.HP, dfHP);
+			System.out.println(p.getName() + "はHPを全回復した！");
+		} else {
+			if (dfHP > btHP + dfHP * sk.getPower() / 10) {
+				p.setBtlParam(Param.HP, btHP + dfHP * sk.getPower() / 10);
+			} else {
+				p.setBtlParam(Param.HP, dfHP);
+			}
+		}
+	}
+
+	private void bfAction(Creature p, Skill sk) {
+		Map<Param, Integer> dfP = p.getDftParam();
+		Map<Param, Integer> btP = p.getBtlParam();
+		if (sk.getAtrbt() == Attribute.ATKBF) {
+			p.setBtlParam(Param.DEF, btP.get(Param.DEF) * sk.getPower());
+			p.setEfDulation(sk, sk.getDulation());
+		} else if (sk.getAtrbt() == Attribute.DEFBF) {
+			p.setBtlParam(Param.DEF, btP.get(Param.DEF) * sk.getPower());
+			p.setEfDulation(sk, sk.getDulation());
+		}
+	}
+
+	private void dbfAction(Creature p, Skill sk) {
+		Map<Param, Integer> dfP = p.getDftParam();
+		Map<Param, Integer> btP = p.getBtlParam();
+		if (sk.getAtrbt() == Attribute.ATKDBF) {
+			p.setBtlParam(Param.DEF, btP.get(Param.DEF) / sk.getPower());
+			p.setEfDulation(sk, sk.getDulation());
+		} else if (sk.getAtrbt() == Attribute.DEFDBF) {
+			p.setBtlParam(Param.DEF, btP.get(Param.DEF) / sk.getPower());
+			p.setEfDulation(sk, sk.getDulation());
+		}
+	}
+
+	private void conErrorAction(Creature p1, Creature p2, Skill sk) {
+		if (sk.getAtrbt() == Attribute.SLEEP) {
+			System.out.println("");
+		} else if (sk.getAtrbt() == Attribute.POISON) {
+			System.out.println();
+		} else if (sk.getAtrbt() == Attribute.CONFUSION) {
+			System.out.println();
+		}
+	}
+
+	private void conErrorAction(Creature p1, Creature[] p2, Skill sk) {
+		if (sk.getAtrbt() == Attribute.SLEEP) {
+			System.out.println("");
+		} else if (sk.getAtrbt() == Attribute.POISON) {
+			System.out.println();
+		} else if (sk.getAtrbt() == Attribute.CONFUSION) {
+			System.out.println();
+		}
+	}
+
+	private void specialAction(Creature p1, Creature p2, Skill skill) {
+		if (skill.getName() == "パルプンテ") {
+			System.out.println("ランダムな効果が発生！");
+		}
 	}
 
 	private void sleep(int second) {
