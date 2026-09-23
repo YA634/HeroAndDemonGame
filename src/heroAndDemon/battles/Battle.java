@@ -103,7 +103,7 @@ public class Battle {
 	private void useSkill(int skillNum, Creature p1, Creature p2) {
 		if (skillNum == 1) {
 			System.out.println(p1.getName() + "は" + p2.getName() + "に殴りかかった！");
-			int dmg = dmgJudge(p1.getBtlParam().get(Param.ATK), p2.getBtlParam().get(Param.DEF), 1);
+			int dmg = dmgJudge(p1, p2, 1, Skill.NGR);
 			System.out.println(dmg + "ダメージ！！");
 			p2.setBtlParam(Param.HP, p2.getBtlParam().get(Param.HP) - dmg);
 		} else if (skillNum == 2) {
@@ -115,14 +115,14 @@ public class Battle {
 			System.out.println(p1.getName() + "は" + skill.getName() + "を使った");
 			//色々処理
 			if (skill.getType() == SkillType.ATTACK) {
-				int dmg = dmgJudge(p1.getBtlParam().get(Param.ATK), p2.getBtlParam().get(Param.DEF), skill.getPower());
+				int dmg = dmgJudge(p1, p2, skill.getPower(), skill);
 				p2.setBtlParam(Param.HP, p2.getBtlParam().get(Param.HP) - dmg);
 			} else if (skill.getType() == SkillType.HEAL) {
 				healAction(p1, skill);
 			} else if (skill.getType() == SkillType.BUFF) {
 				bfAction(p1, skill);
 			} else if (skill.getType() == SkillType.DEBUFF) {
-				dbfAction(p2, skill);
+				dbfAction(p1, p2, skill);
 			} else if (skill.getType() == SkillType.CONERROR) {
 				conErrorAction(p1, p2, skill);
 			} else if (skill.getType() == SkillType.SPECIAL) {
@@ -167,25 +167,35 @@ public class Battle {
 		}
 	}
 
-	private boolean avoidJudge(Creature p1, Creature p2) {
+	private boolean avoidJudge(Creature p1, Creature p2, int option) {
 		Random r = new Random();
-		int p1Spd = p1.getBtlParam().get(Param.SPD) + r.nextInt(30);
-		int p2Spd = p2.getBtlParam().get(Param.SPD) + r.nextInt(30);
-		if (p1Spd > p2Spd + 30) {
+		int p1Spd = p1.getBtlParam().get(Param.SPD) + r.nextInt(50);
+		int p2Spd = p2.getBtlParam().get(Param.SPD) + r.nextInt(50);
+		if (p1Spd > p2Spd + option) {
+			//回避成功
 			return true;
 		} else {
+			//回避失敗
 			return false;
 		}
 	}
 
-	private int dmgJudge(int atk, int def, int option) {
+	private int dmgJudge(Creature p1, Creature p2, int option, Skill sk) {
 		//クリティカル、オーバークリティカルを追加
 		Random r = new Random();
-		if (option == 1) {
-			int dmg = atk + r.nextInt(100) - def;
-			return dmg;
+		if (avoidJudge(p1, p2, 50)) {
+			System.out.println(p2.getName() + "は" + sk.getName() + "を避けた！");
+			return 0;
+		} else {
+			if (option == 1) {
+				int dmg = p1.getBtlParam().get(Param.ATK) + r.nextInt(100) - p2.getBtlParam().get(Param.DEF);
+				if (dmg < 0) {
+					return 0;
+				}
+				return dmg;
+			}
+			return 0;
 		}
-		return 0;
 	}
 
 	private void healAction(Creature p, Skill sk) {
@@ -215,25 +225,33 @@ public class Battle {
 		}
 	}
 
-	private void dbfAction(Creature p, Skill sk) {
-		Map<Param, Integer> dfP = p.getDftParam();
-		Map<Param, Integer> btP = p.getBtlParam();
-		if (sk.getAtrbt() == Attribute.ATKDBF) {
-			p.setBtlParam(Param.DEF, btP.get(Param.DEF) / sk.getPower());
-			p.setEfDulation(sk, sk.getDulation());
-		} else if (sk.getAtrbt() == Attribute.DEFDBF) {
-			p.setBtlParam(Param.DEF, btP.get(Param.DEF) / sk.getPower());
-			p.setEfDulation(sk, sk.getDulation());
+	private void dbfAction(Creature p1, Creature p2, Skill sk) {
+		Map<Param, Integer> dfP = p2.getDftParam();
+		Map<Param, Integer> btP = p2.getBtlParam();
+		if (avoidJudge(p1, p2, 50)) {
+			System.out.println(p2.getName() + "は" + sk.getName() + "を避けた！");
+		} else {
+			if (sk.getAtrbt() == Attribute.ATKDBF) {
+				p2.setBtlParam(Param.DEF, btP.get(Param.DEF) / sk.getPower());
+				p2.setEfDulation(sk, sk.getDulation());
+			} else if (sk.getAtrbt() == Attribute.DEFDBF) {
+				p2.setBtlParam(Param.DEF, btP.get(Param.DEF) / sk.getPower());
+				p2.setEfDulation(sk, sk.getDulation());
+			}
 		}
 	}
 
 	private void conErrorAction(Creature p1, Creature p2, Skill sk) {
-		if (sk.getAtrbt() == Attribute.SLEEP) {
-			System.out.println("");
-		} else if (sk.getAtrbt() == Attribute.POISON) {
-			System.out.println();
-		} else if (sk.getAtrbt() == Attribute.CONFUSION) {
-			System.out.println();
+		if (avoidJudge(p1, p2, 20)) {
+			System.out.println(p2.getName() + "は" + sk.getName() + "を避けた！");
+		} else {
+			if (sk.getAtrbt() == Attribute.SLEEP) {
+				System.out.println("");
+			} else if (sk.getAtrbt() == Attribute.POISON) {
+				System.out.println();
+			} else if (sk.getAtrbt() == Attribute.CONFUSION) {
+				System.out.println();
+			}
 		}
 	}
 

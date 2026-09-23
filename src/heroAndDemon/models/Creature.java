@@ -8,6 +8,7 @@ public class Creature {
 	public enum Category {
 		HERO, DEMON
 	}
+	//simobeを追加
 
 	//勇者か魔王か
 	private Category category;
