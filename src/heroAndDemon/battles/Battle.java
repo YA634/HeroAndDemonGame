@@ -110,59 +110,82 @@ public class Battle {
 					//demon.useSkill(firstSkill);
 				}
 				Creature p1 = spdJudge(hero, demon);
+				Creature p2;
 				if (p1 == hero) {
-					if (p1.getEfDulation().containsKey(Attribute.SLEEP)) {
-						System.out.println(p1.getName() + "はまだ眠っている！");
-					} else {
-						if (p1.getEfDulation().containsKey(Attribute.CONFUSION)) {
-							int con = r.nextInt(2);
-							if (con == 0) {
-								int cDmg = p1.getBtlParam().get(Param.HP) * 3 / 100;
-								System.out.println(p1.getName() + "は混乱して自身に攻撃を放った！");
-								System.out.println(cDmg + "ダメージ！!");
-								p1.setBtlParam(Param.HP, p1.getBtlParam().get(Param.HP) - cDmg);
-							} else {
-								useSkill(MenuSelect, hero, demon);
-							}
-						} else {
-							useSkill(MenuSelect, hero, demon);
-						}
-						sleep(1);
-						isLiveJudge(demon);
-						isLiveJudge(hero);
-						if (demon.isLive() && hero.isLive()) {
-							useSkill(MenuSelect, demon, hero);
-						}
-						isLiveJudge(hero);
-					}
-					sleep(1);
+					p2 = demon;
 				} else {
-					if (p1.getEfDulation().containsKey(Attribute.SLEEP)) {
-						System.out.println(p1.getName() + "はまだ眠っている！");
-					} else {
-						if (p1.getEfDulation().containsKey(Attribute.CONFUSION)) {
-							int con = r.nextInt(2);
-							if (con == 0) {
-								int cDmg = p1.getBtlParam().get(Param.HP) * 3 / 100;
-								System.out.println(p1.getName() + "は混乱して自身に攻撃を放った！");
-								System.out.println(cDmg + "ダメージ！!");
-								p1.setBtlParam(Param.HP, p1.getBtlParam().get(Param.HP) - cDmg);
-							} else {
-								useSkill(MenuSelect, demon, hero);
-							}
+					p2 = hero;
+				}
+				if (p1.getEfDulation().containsKey(Attribute.SLEEP)) {
+					System.out.println(p1.getName() + "はまだ眠っている！");
+				} else {
+					if (p1.getEfDulation().containsKey(Attribute.CONFUSION)) {
+						int con = r.nextInt(2);
+						if (con == 0) {
+							int cDmg = p1.getBtlParam().get(Param.HP) * 3 / 100;
+							System.out.println(p1.getName() + "は混乱して自身に攻撃を放った！");
+							System.out.println(cDmg + "ダメージ！!");
+							p1.setBtlParam(Param.HP, p1.getBtlParam().get(Param.HP) - cDmg);
 						} else {
-							useSkill(MenuSelect, demon, hero);
+							useSkill(MenuSelect, p1, p2);
 						}
-						isLiveJudge(hero);
-						isLiveJudge(demon);
-						sleep(1);
-						if (hero.isLive() && demon.isLive()) {
-							useSkill(MenuSelect, hero, demon);
-						}
-						isLiveJudge(demon);
+					} else {
+						useSkill(MenuSelect, p1, p2);
 					}
 					sleep(1);
+					isLiveJudge(demon);
+					isLiveJudge(hero);
+					if (demon.isLive() && hero.isLive()) {
+						if (p2.getEfDulation().containsKey(Attribute.SLEEP)) {
+							System.out.println(p2.getName() + "はまだ眠っている！");
+						} else {
+							if (p2.getEfDulation().containsKey(Attribute.CONFUSION)) {
+								int con = r.nextInt(2);
+								if (con == 0) {
+									int cDmg = p2.getBtlParam().get(Param.HP) * 3 / 100;
+									System.out.println(p2.getName() + "は混乱して自身に攻撃を放った！");
+									System.out.println(cDmg + "ダメージ！!");
+									p2.setBtlParam(Param.HP, p2.getBtlParam().get(Param.HP) - cDmg);
+								} else {
+									useSkill(MenuSelect, p2, p1);
+								}
+							} else {
+								useSkill(MenuSelect, p2, p1);
+							}
+						}
+					}
+					sleep(1);
+					isLiveJudge(demon);
+					isLiveJudge(hero);
 				}
+				sleep(1);
+				//			} else {
+				//				Creature p2 = hero;
+				//				if (p1.getEfDulation().containsKey(Attribute.SLEEP)) {
+				//					System.out.println(p1.getName() + "はまだ眠っている！");
+				//				} else {
+				//					if (p1.getEfDulation().containsKey(Attribute.CONFUSION)) {
+				//						int con = r.nextInt(2);
+				//						if (con == 0) {
+				//							int cDmg = p1.getBtlParam().get(Param.HP) * 3 / 100;
+				//							System.out.println(p1.getName() + "は混乱して自身に攻撃を放った！");
+				//							System.out.println(cDmg + "ダメージ！!");
+				//							p1.setBtlParam(Param.HP, p1.getBtlParam().get(Param.HP) - cDmg);
+				//						} else {
+				//							useSkill(MenuSelect, demon, hero);
+				//						}
+				//					} else {
+				//						useSkill(MenuSelect, demon, hero);
+				//					}
+				//					isLiveJudge(hero);
+				//					isLiveJudge(demon);
+				//					sleep(1);
+				//					if (hero.isLive() && demon.isLive()) {
+				//						useSkill(MenuSelect, hero, demon);
+				//					}
+				//					isLiveJudge(demon);
+				//				}
+				sleep(1);
 				endFaze(hero);
 				endFaze(demon);
 				isLiveJudge(hero);
@@ -182,6 +205,10 @@ public class Battle {
 	}
 
 	private void useSkill(int skillNum, Creature p1, Creature p2) {
+		Random r = new Random();
+		if (p1.getName().equals("魔王")) {
+			skillNum = r.nextInt(6) + 1;
+		}
 		if (skillNum == 1) {
 			System.out.println(p1.getName() + "は" + p2.getName() + "に殴りかかった！");
 			int dmg = dmgJudge(p1, p2, 1, Skill.NGR);
@@ -368,7 +395,7 @@ public class Battle {
 	}
 
 	private void specialAction(Creature p1, Creature p2, Skill skill) {
-		if (skill.getName() == "パルプンテ") {
+		if (skill == Skill.PPT) {
 			System.out.println("ランダムな効果が発生！");
 		}
 	}
