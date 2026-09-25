@@ -220,22 +220,27 @@ public class Battle {
 			p1.setEfDulation(Skill.MMR, Skill.MMR.getDulation());
 		} else {
 			Skill skill = p1.getSkillSet()[skillNum - 3];
-			System.out.println(p1.getName() + "は" + skill.getName() + "を使った");
-			//色々処理
-			if (skill.getType() == SkillType.ATTACK) {
-				int dmg = dmgJudge(p1, p2, skill.getPower(), skill);
-				System.out.println(p2.getName() + "に" + dmg + "ダメージ！！");
-				p2.setBtlParam(Param.HP, p2.getBtlParam().get(Param.HP) - dmg);
-			} else if (skill.getType() == SkillType.HEAL) {
-				healAction(p1, skill);
-			} else if (skill.getType() == SkillType.BUFF) {
-				bfAction(p1, skill);
-			} else if (skill.getType() == SkillType.DEBUFF) {
-				dbfAction(p1, p2, skill);
-			} else if (skill.getType() == SkillType.CONERROR) {
-				conErrorAction(p1, p2, skill);
-			} else if (skill.getType() == SkillType.SPECIAL) {
-				specialAction(p1, p2, skill);
+			if (p1.getBtlParam().get(Param.MP) < skill.getUseMP()) {
+				System.out.println("MPが足りない！");
+			} else {
+				p1.setBtlParam(Param.MP, p1.getBtlParam().get(Param.MP) - skill.getUseMP());
+				System.out.println(p1.getName() + "は" + skill.getName() + "を使った");
+				//色々処理
+				if (skill.getType() == SkillType.ATTACK) {
+					int dmg = dmgJudge(p1, p2, skill.getPower(), skill);
+					System.out.println(p2.getName() + "に" + dmg + "ダメージ！！");
+					p2.setBtlParam(Param.HP, p2.getBtlParam().get(Param.HP) - dmg);
+				} else if (skill.getType() == SkillType.HEAL) {
+					healAction(p1, skill);
+				} else if (skill.getType() == SkillType.BUFF) {
+					bfAction(p1, skill);
+				} else if (skill.getType() == SkillType.DEBUFF) {
+					dbfAction(p1, p2, skill);
+				} else if (skill.getType() == SkillType.CONERROR) {
+					conErrorAction(p1, p2, skill);
+				} else if (skill.getType() == SkillType.SPECIAL) {
+					specialAction(p1, p2, skill);
+				}
 			}
 		}
 	}
@@ -296,14 +301,26 @@ public class Battle {
 			System.out.println(p2.getName() + "は" + sk.getName() + "を避けた！");
 			return 0;
 		} else {
-			if (option == 1) {
-				int dmg = p1.getBtlParam().get(Param.ATK) + r.nextInt(100) - p2.getBtlParam().get(Param.DEF);
-				if (dmg < 0) {
-					return 0;
+			int cri = r.nextInt(10);
+			int oCri = r.nextInt(10);
+			int dmg;
+			if (cri == 0) {
+				if (oCri == 0) {
+					System.out.println("オーバークリティカル！！！");
+					dmg = (p1.getBtlParam().get(Param.ATK) + option + r.nextInt(100)) * 8
+							- p2.getBtlParam().get(Param.DEF);
+				} else {
+					System.out.println("クリティカル！！");
+					dmg = (p1.getBtlParam().get(Param.ATK) + option + r.nextInt(100)) * 4
+							- p2.getBtlParam().get(Param.DEF);
 				}
-				return dmg;
+			} else {
+				dmg = p1.getBtlParam().get(Param.ATK) + option + r.nextInt(100) - p2.getBtlParam().get(Param.DEF);
 			}
-			return 0;
+			if (dmg < 0) {
+				return 0;
+			}
+			return dmg;
 		}
 	}
 
@@ -490,6 +507,7 @@ public class Battle {
 	}
 
 	private void sleep(int second) {
+		//second秒待機するやつ
 		try {
 			Thread.sleep(second * 1000);
 		} catch (InterruptedException e) {
