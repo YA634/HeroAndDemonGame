@@ -8,10 +8,10 @@ public enum Skill {
 	PPT("パルプンテ", SkillType.SPECIAL, 0, 1, Attribute.NONE),
 	DKI("どくの息", SkillType.CONERROR, 0, 3, Attribute.POISON),
 	MER("メラ", SkillType.ATTACK, 20, 1, Attribute.FIRE),
-	NKM("仲間をよぶ", SkillType.SPECIAL, 0, 0, Attribute.NONE),
+	NKM("仲間をよぶ", SkillType.SPECIAL, 0, 0, Attribute.NONE), //未実装
 	HIM("ホイミ", SkillType.HEAL, 0, 1, Attribute.NONE),
 	RRH("ラリホー", SkillType.CONERROR, 0, 3, Attribute.SLEEP),
-	MDP("メダパニ", SkillType.CONERROR, 0, 3, Attribute.CONFUSION),
+	MDP("メダパニ", SkillType.CONERROR, 0, 3, Attribute.CONFUSION),//未実装
 	;
 	//案　仲間を呼ぶ　敵味方全員に付与する効果、ダメージ　自傷して強力なやつ
 

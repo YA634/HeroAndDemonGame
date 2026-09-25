@@ -1,6 +1,7 @@
 package heroAndDemon.inputs;
 
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
 import heroAndDemon.models.Skill;
@@ -27,7 +28,23 @@ public class InputUtil {
 				scan.nextLine(); // 無効な入力をバッファから読み捨てる
 			}
 		}
+	}
 
+	public Skill readSkill(String prompt, List<Skill> skList) {
+		while (true) {
+			System.out.println(prompt);
+			int index = scan.nextInt() - 1;
+			try {
+				if (index >= 0 && index < 3) {
+					return skList.get(index);
+				}
+				System.out.println("1~3までの数字を入力してください");
+			} catch (InputMismatchException e) {
+				// TODO: handle exception
+				System.out.println("数字を入力してください");
+				scan.nextLine(); // 無効な入力をバッファから読み捨てる
+			}
+		}
 	}
 
 	public int readMenuChoice(String prompt, int menuAmount) {

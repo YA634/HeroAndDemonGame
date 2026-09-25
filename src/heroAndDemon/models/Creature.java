@@ -150,6 +150,8 @@ public class Creature {
 	}
 
 	public void showAA(String category) {
+		//アスキーアート(いらない、こんなのにいっぱい時間をかけたのは失敗だったかも)
+		//微妙にコレじゃない感がある、直したいけどそんな時間ない
 		if (category == "demon") {
 			System.out.println("""
 						　　　　　　 , ―-　＿　　　　　　 ＿ -― ､
