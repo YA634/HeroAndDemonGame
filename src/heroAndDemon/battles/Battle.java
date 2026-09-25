@@ -24,8 +24,11 @@ public class Battle {
 		System.out.println("== 取得可能なスキル ==");
 		int indexNum = 0;
 		for (Skill skill : Skill.values()) {
-			System.out.println((indexNum + 1) + ":" + skill.getName());
+			if (skill == Skill.NGR || skill == Skill.MMR) {
+				continue;
+			}
 			indexNum++;
+			System.out.println((indexNum) + ":" + skill.getName());
 		}
 		InputUtil input = new InputUtil();
 		Skill[] skillSet = new Skill[3];
@@ -88,6 +91,7 @@ public class Battle {
 					sleep(1);
 				}
 				hero.showParameter();
+				demon.showParameter();
 				sleep(1);
 			}
 		}
@@ -116,6 +120,7 @@ public class Battle {
 			//色々処理
 			if (skill.getType() == SkillType.ATTACK) {
 				int dmg = dmgJudge(p1, p2, skill.getPower(), skill);
+				System.out.println(p2.getName() + "に" + dmg + "ダメージ！！");
 				p2.setBtlParam(Param.HP, p2.getBtlParam().get(Param.HP) - dmg);
 			} else if (skill.getType() == SkillType.HEAL) {
 				healAction(p1, skill);
@@ -242,15 +247,26 @@ public class Battle {
 	}
 
 	private void conErrorAction(Creature p1, Creature p2, Skill sk) {
-		if (avoidJudge(p1, p2, 20)) {
-			System.out.println(p2.getName() + "は" + sk.getName() + "を避けた！");
-		} else {
-			if (sk.getAtrbt() == Attribute.SLEEP) {
-				System.out.println("");
-			} else if (sk.getAtrbt() == Attribute.POISON) {
-				System.out.println();
-			} else if (sk.getAtrbt() == Attribute.CONFUSION) {
-				System.out.println();
+		if (sk.getAtrbt() == Attribute.SLEEP) {
+			if (avoidJudge(p1, p2, 20)) {
+				System.out.println(p2.getName() + "は" + sk.getName() + "を避けた！");
+			} else {
+				System.out.println(p2.getName() + "は眠ってしまった！");
+				p2.setEfDulation(sk, sk.getDulation());
+			}
+		} else if (sk.getAtrbt() == Attribute.POISON) {
+			if (avoidJudge(p1, p2, 40)) {
+				System.out.println(p2.getName() + "は" + sk.getName() + "を避けた！");
+			} else {
+				System.out.println(p2.getName() + "は毒状態になってしまった！");
+				p2.setEfDulation(sk, sk.getDulation());
+			}
+		} else if (sk.getAtrbt() == Attribute.CONFUSION) {
+			if (avoidJudge(p1, p2, 40)) {
+				System.out.println(p2.getName() + "は" + sk.getName() + "を避けた！");
+			} else {
+				System.out.println(p2.getName() + "は混乱状態になってしまった！");
+				p2.setEfDulation(sk, sk.getDulation());
 			}
 		}
 	}

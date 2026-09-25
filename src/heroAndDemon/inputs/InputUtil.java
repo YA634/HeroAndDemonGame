@@ -18,7 +18,7 @@ public class InputUtil {
 			int index = scan.nextInt() - 1;
 			try {
 				if (index >= 0 && index < Skill.values().length) {
-					return Skill.values()[index];
+					return Skill.values()[index + 2];
 				}
 				System.out.println("1~" + (Skill.values().length) + "までの数字を入力してください");
 			} catch (InputMismatchException e) {

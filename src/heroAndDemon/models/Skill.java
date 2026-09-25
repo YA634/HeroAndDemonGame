@@ -1,12 +1,18 @@
 package heroAndDemon.models;
 
 public enum Skill {
-	ION("イオナズン", SkillType.ATTACK, 80, 1, Attribute.THUNDER), BKT("バイキルト", SkillType.BUFF, 2, 3, Attribute.ATKBF), PPT(
-			"パルプンテ", SkillType.SPECIAL, 0, 1,
-			Attribute.NONE), NGR("殴る", SkillType.ATTACK, 10, 1, Attribute.NONE), MMR("身を守る", SkillType.BUFF, 2, 3,
-					Attribute.DEFBF), DKI("どくの息", SkillType.CONERROR, 0, 3, Attribute.POISON), MER("メラ",
-							SkillType.ATTACK, 20, 1, Attribute.FIRE), NKM("仲間をよぶ", SkillType.SPECIAL, 0, 0,
-									Attribute.NONE), HIM("ホイミ", SkillType.HEAL, 0, 1, Attribute.NONE);
+	NGR("殴る", SkillType.ATTACK, 10, 1, Attribute.NONE),
+	MMR("身を守る", SkillType.BUFF, 2, 3, Attribute.DEFBF),
+	ION("イオナズン", SkillType.ATTACK, 80, 1, Attribute.THUNDER),
+	BKT("バイキルト", SkillType.BUFF, 2, 3, Attribute.ATKBF),
+	PPT("パルプンテ", SkillType.SPECIAL, 0, 1, Attribute.NONE),
+	DKI("どくの息", SkillType.CONERROR, 0, 3, Attribute.POISON),
+	MER("メラ", SkillType.ATTACK, 20, 1, Attribute.FIRE),
+	NKM("仲間をよぶ", SkillType.SPECIAL, 0, 0, Attribute.NONE),
+	HIM("ホイミ", SkillType.HEAL, 0, 1, Attribute.NONE),
+	RRH("ラリホー", SkillType.CONERROR, 0, 3, Attribute.SLEEP),
+	MDP("メダパニ", SkillType.CONERROR, 0, 3, Attribute.CONFUSION),
+	;
 	//案　仲間を呼ぶ　敵味方全員に付与する効果、ダメージ　自傷して強力なやつ
 
 	private final String name;
