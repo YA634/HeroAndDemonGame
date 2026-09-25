@@ -2,6 +2,7 @@ package heroAndDemon.battles;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -75,6 +76,7 @@ public class Battle {
 
 	private int battle(Creature hero, Creature demon) {
 		InputUtil input = new InputUtil();
+		Random r = new Random();
 		int turn = 0;
 		while (hero.isLive() && demon.isLive()) {
 			demon.showAA("demon");
@@ -112,10 +114,23 @@ public class Battle {
 					if (p1.getEfDulation().containsKey(Attribute.SLEEP)) {
 						System.out.println(p1.getName() + "はまだ眠っている！");
 					} else {
-						useSkill(MenuSelect, hero, demon);
+						if (p1.getEfDulation().containsKey(Attribute.CONFUSION)) {
+							int con = r.nextInt(2);
+							if (con == 0) {
+								int cDmg = p1.getBtlParam().get(Param.HP) * 3 / 100;
+								System.out.println(p1.getName() + "は混乱して自身に攻撃を放った！");
+								System.out.println(cDmg + "ダメージ！!");
+								p1.setBtlParam(Param.HP, p1.getBtlParam().get(Param.HP) - cDmg);
+							} else {
+								useSkill(MenuSelect, hero, demon);
+							}
+						} else {
+							useSkill(MenuSelect, hero, demon);
+						}
 						sleep(1);
 						isLiveJudge(demon);
-						if (demon.isLive()) {
+						isLiveJudge(hero);
+						if (demon.isLive() && hero.isLive()) {
 							useSkill(MenuSelect, demon, hero);
 						}
 						isLiveJudge(hero);
@@ -125,10 +140,23 @@ public class Battle {
 					if (p1.getEfDulation().containsKey(Attribute.SLEEP)) {
 						System.out.println(p1.getName() + "はまだ眠っている！");
 					} else {
-						useSkill(MenuSelect, demon, hero);
+						if (p1.getEfDulation().containsKey(Attribute.CONFUSION)) {
+							int con = r.nextInt(2);
+							if (con == 0) {
+								int cDmg = p1.getBtlParam().get(Param.HP) * 3 / 100;
+								System.out.println(p1.getName() + "は混乱して自身に攻撃を放った！");
+								System.out.println(cDmg + "ダメージ！!");
+								p1.setBtlParam(Param.HP, p1.getBtlParam().get(Param.HP) - cDmg);
+							} else {
+								useSkill(MenuSelect, demon, hero);
+							}
+						} else {
+							useSkill(MenuSelect, demon, hero);
+						}
 						isLiveJudge(hero);
+						isLiveJudge(demon);
 						sleep(1);
-						if (hero.isLive()) {
+						if (hero.isLive() && demon.isLive()) {
 							useSkill(MenuSelect, hero, demon);
 						}
 						isLiveJudge(demon);
@@ -279,7 +307,7 @@ public class Battle {
 		Map<Param, Integer> dfP = p.getDftParam();
 		Map<Param, Integer> btP = p.getBtlParam();
 		if (sk.getAtrbt() == Attribute.ATKBF) {
-			p.setBtlParam(Param.DEF, btP.get(Param.DEF) * sk.getPower());
+			p.setBtlParam(Param.ATK, btP.get(Param.ATK) * sk.getPower());
 			p.setEfDulation(sk, sk.getDulation());
 		} else if (sk.getAtrbt() == Attribute.DEFBF) {
 			p.setBtlParam(Param.DEF, btP.get(Param.DEF) * sk.getPower());
@@ -294,7 +322,7 @@ public class Battle {
 			System.out.println(p2.getName() + "は" + sk.getName() + "を避けた！");
 		} else {
 			if (sk.getAtrbt() == Attribute.ATKDBF) {
-				p2.setBtlParam(Param.DEF, btP.get(Param.DEF) / sk.getPower());
+				p2.setBtlParam(Param.ATK, btP.get(Param.ATK) / sk.getPower());
 				p2.setEfDulation(sk, sk.getDulation());
 			} else if (sk.getAtrbt() == Attribute.DEFDBF) {
 				p2.setBtlParam(Param.DEF, btP.get(Param.DEF) / sk.getPower());
@@ -354,7 +382,7 @@ public class Battle {
 		//trueなら解除、falseなら解除失敗
 		Random r = new Random();
 		if (du <= 0) {
-			int tf = r.nextInt(1);
+			int tf = r.nextInt(2);
 			if (tf == 0) {
 				return false;
 			} else {
@@ -368,7 +396,10 @@ public class Battle {
 	private void endFaze(Creature p1) {
 		Map<Skill, Integer> pEfD = p1.getEfDulation();
 		Set<Skill> pSkills = pEfD.keySet();
-		for (Skill sk : pSkills) {
+		Iterator<Skill> it = pEfD.keySet().iterator();
+		while (it.hasNext()) {
+			Skill sk = it.next();
+			//		for (Skill sk : pSkills) {
 			Attribute atrbt = sk.getAtrbt();
 			int du = pEfD.get(sk);
 			if (atrbt == Attribute.POISON) {
@@ -379,7 +410,8 @@ public class Battle {
 					boolean remC = removeConErrorJudge(p1, atrbt, du);
 					if (remC) {
 						//解除成功の場合
-						pEfD.remove(sk);
+						//						pEfD.remove(sk);
+						it.remove();
 						System.out.println(p1.getName() + "は毒の治癒に成功した！");
 					} else {
 						System.out.println(p1.getName() + "はまだ毒状態だ！");
@@ -393,7 +425,8 @@ public class Battle {
 					boolean remC = removeConErrorJudge(p1, atrbt, du);
 					if (remC) {
 						//解除成功の場合
-						pEfD.remove(sk);
+						//						pEfD.remove(sk);
+						it.remove();
 						System.out.println(p1.getName() + "は眠りから醒めた！");
 					} else {
 						System.out.println(p1.getName() + "はまだ眠っている！");
@@ -407,7 +440,8 @@ public class Battle {
 					boolean remC = removeConErrorJudge(p1, atrbt, du);
 					if (remC) {
 						//解除成功の場合
-						pEfD.remove(sk);
+						//						pEfD.remove(sk);
+						it.remove();
 						System.out.println(p1.getName() + "は混乱から覚めた！");
 					} else {
 						System.out.println(p1.getName() + "はまだ混乱している！");
@@ -415,6 +449,14 @@ public class Battle {
 				} else {
 					pEfD.put(sk, du - 1);
 					System.out.println(p1.getName() + "はまだ混乱している！");
+				}
+			} else if (atrbt == Attribute.ATKBF || atrbt == Attribute.DEFBF || atrbt == Attribute.ATKDBF
+					|| atrbt == Attribute.DEFDBF) {
+				if (du == 0) {
+					it.remove();
+					System.out.println(p1.getName() + "は" + sk.getName() + "の効果が消えた！");
+				} else {
+					pEfD.put(sk, du - 1);
 				}
 			}
 		}

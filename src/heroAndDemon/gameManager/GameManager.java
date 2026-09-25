@@ -37,8 +37,12 @@ public class GameManager {
 				if (btlResult == 1) { //勇者勝ち
 					break;
 				} else if ((btlResult == 2 || btlResult == 4) && limit == 0) {
+					System.out.println("勇者のHPは0になった");
+					System.out.println("勇者はもう生き返れない...");
 					break;
 				}
+				System.out.println("勇者のHPは0になった");
+				System.out.println("勇者は奇跡の力で生き返った！！ 奇跡の力を使えるのはあと" + limit + "回...");
 			}
 			showResult(btlResult, name);
 			th = input.readMenuChoice("もう一度同じ設定で遊ぶ→ 1:はい 2:いいえ 3:このゲームを終了する", 3);
