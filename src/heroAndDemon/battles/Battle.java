@@ -186,11 +186,9 @@ public class Battle {
 							}
 						}
 					}
-					sleep(1);
 					isLiveJudge(demon);
 					isLiveJudge(hero);
 				}
-				sleep(1);
 				//			} else {
 				//				Creature p2 = hero;
 				//				if (p1.getEfDulation().containsKey(Attribute.SLEEP)) {
@@ -414,6 +412,7 @@ public class Battle {
 			p.setLive(false);
 		} else if (hp <= 0 && p.getFirstSkill() == FirstSkill.HRS && p.getGuts() == 1) {
 			System.out.println("勇者の魂が震える！！");
+			System.out.println("勇者は生き返り、力がみなぎってきた！！");
 			p.resetEfDulation();
 			p.setBtlParam(Param.HP, p.getDftParam().get(Param.HP));
 			p.setBtlParam(Param.ATK, p.getDftParam().get(Param.ATK) * 2);
@@ -424,6 +423,7 @@ public class Battle {
 			p.setGuts(0);
 		} else if (hp <= 0 && p.getFirstSkill() == FirstSkill.HTT && p.getGuts() == 1) {
 			System.out.println("不退転の覚悟がその身を現世に止まらせる！！");
+			System.out.println(p.getName() + "は致命的な攻撃を耐え切った！！");
 			p.setBtlParam(Param.HP, 1);
 			p.setBtlParam(Param.DEF, p.getBtlParam().get(Param.DEF) * 10);
 			p.setGuts(0);
@@ -452,6 +452,7 @@ public class Battle {
 			p.setBtlParam(Param.ATK, btP.get(Param.ATK) * sk.getPower());
 			p.setBtlParam(Param.MAG, btP.get(Param.MAG) * sk.getPower());
 			p.setEfDulation(sk, sk.getDulation());
+			System.out.println(p.getName() + "の物理攻撃力・魔法攻撃力は" + sk.getPower() + "倍になった！");
 		} else if (sk.getAtrbt() == Attribute.DEFBF) {
 			p.setBtlParam(Param.DEF, btP.get(Param.DEF) * sk.getPower());
 			p.setEfDulation(sk, sk.getDulation());
@@ -468,9 +469,11 @@ public class Battle {
 				p2.setBtlParam(Param.ATK, btP.get(Param.ATK) / sk.getPower());
 				p2.setBtlParam(Param.MAG, btP.get(Param.MAG) / sk.getPower());
 				p2.setEfDulation(sk, sk.getDulation());
+				System.out.println(p2.getName() + "の物理攻撃力・魔法攻撃力は1/" + sk.getPower() + "倍になった！");
 			} else if (sk.getAtrbt() == Attribute.DEFDBF) {
 				p2.setBtlParam(Param.DEF, btP.get(Param.DEF) / sk.getPower());
 				p2.setEfDulation(sk, sk.getDulation());
+				System.out.println(p2.getName() + "の防御力は1/" + sk.getPower() + "倍になった！");
 			}
 		}
 	}
