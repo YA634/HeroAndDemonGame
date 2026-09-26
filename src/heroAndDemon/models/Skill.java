@@ -8,16 +8,19 @@ public enum Skill implements UsableSkill {
 	RKN("ルカナン(10)", SkillType.DEBUFF, 2, 3, 10, Attribute.DEFDBF),
 	DKI("どくの息(10)", SkillType.CONERROR, 0, 3, 10, Attribute.POISON),
 	MER("メラ(10)", SkillType.MAGIC, 20, 1, 10, Attribute.FIRE),
+	MHD("マヒャド(10)", SkillType.MAGIC, 20, 1, 10, Attribute.ICE),
 	HIM("ホイミ(10)", SkillType.HEAL, 0, 1, 10, Attribute.NONE),
 	RRH("ラリホー(30)", SkillType.CONERROR, 0, 3, 30, Attribute.SLEEP),
 	MDP("メダパニ(10)", SkillType.CONERROR, 0, 3, 10, Attribute.CONFUSION),
-	PPT("パルプンテ(0)(未実装)", SkillType.SPECIAL, 0, 1, 0, Attribute.NONE),
 	MGT("メガンテ(HP全て)", SkillType.SPECIAL, 0, 0, 0, Attribute.NONE),
 	MDT("マダンテ(MP全て)", SkillType.SPECIAL, 0, 0, 0, Attribute.NONE),
 	SSK("死の宣告(99)", SkillType.CONERROR, 0, 20, 99, Attribute.DEATH), //20ターン後に相手確定で死亡
-	NKM("仲間をよぶ(50)(未実装)", SkillType.SPECIAL, 0, 0, 50, Attribute.NONE), //未実装
-	;
+	PPT("パルプンテ(0)(未実装)", SkillType.SPECIAL, 0, 1, 0, Attribute.NONE),
+	//	NKM("仲間をよぶ(50)(未実装)", SkillType.SPECIAL, 0, 0, 50, Attribute.NONE), //未実装
+	//	MTO("メテオ(50)(未実装)", SkillType.SPECIAL, 0, 1, 50, Attribute.NONE)//大小の隕石をよぶ、敵味方全体にダメージ
+	//  TGM("つるぎのまい(0)(未実装)", SkillType.SPECIAL, 20, 1, 0, Attribute.NONE),//4回攻撃
 	//案　仲間を呼ぶ　敵味方全員に付与する効果、ダメージ　自傷して強力なやつ
+	;
 
 	private final String name;
 	private final SkillType type;

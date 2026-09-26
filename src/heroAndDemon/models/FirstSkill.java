@@ -1,12 +1,12 @@
 package heroAndDemon.models;
 
 public enum FirstSkill implements UsableSkill {
-	MOU("魔王の覇気(F)(未実装)", SkillType.FIRST, 0, 0, 0, Attribute.NONE),
-	BNS("バーニングソウル(F)(未実装)", SkillType.FIRST, 0, 0, 0, Attribute.NONE), //毎ターン10%HP減少
-	MGS("マジシャンズソウル(F)(未実装)", SkillType.FIRST, 0, 0, 0, Attribute.NONE),
-	HRS("ヒーローズソウル(F)(未実装)", SkillType.FIRST, 0, 0, 0, Attribute.NONE), //HP0になったら全回復+バフで復活
-	HTT("不退転の覚悟(F)(未実装)", SkillType.FIRST, 0, 0, 0, Attribute.NONE),
-	GYB("運命の女神に愛されたもの(F)(未実装)", SkillType.FIRST, 0, 0, 0, Attribute.NONE), //技全部コイントス、表なら2倍裏ならファンブル
+	MOU("魔王の覇気(F)", SkillType.FIRST, 0, 0, 0, Attribute.NONE),
+	BNS("バーニングソウル(F)", SkillType.FIRST, 0, 0, 0, Attribute.NONE), //毎ターン10%HP減少
+	MGS("マジシャンズソウル(F)", SkillType.FIRST, 0, 0, 0, Attribute.NONE),
+	HRS("ヒーローズソウル(F)", SkillType.FIRST, 0, 0, 0, Attribute.NONE), //HP0になったら全回復+バフで復活
+	HTT("不退転の覚悟(F)", SkillType.FIRST, 0, 0, 0, Attribute.NONE),
+	GYB("運命の女神に愛されたもの(F)", SkillType.FIRST, 0, 0, 0, Attribute.NONE), //技全部コイントス、表なら2倍裏ならファンブル
 	;
 	//案　仲間を呼ぶ　敵味方全員に付与する効果、ダメージ　自傷して強力なやつ
 

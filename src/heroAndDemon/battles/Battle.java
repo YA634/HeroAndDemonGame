@@ -242,7 +242,7 @@ public class Battle {
 	private void useSkill(int skillNum, Creature p1, Creature p2) {
 		Random r = new Random();
 		if (p1.getName().equals("魔王")) {
-			skillNum = r.nextInt(6) + 1;
+			skillNum = r.nextInt(5) + 1;
 		}
 		if (skillNum == 1) {
 			System.out.println(p1.getName() + "は" + p2.getName() + "に殴りかかった！");
@@ -530,9 +530,10 @@ public class Battle {
 			System.out.println(p2.getName() + "に" + dmg + "ダメージ！！");
 			p1.setBtlParam(Param.HP, 0);
 			p2.setBtlParam(Param.HP, p2.getBtlParam().get(Param.HP) - dmg);
-		} else if (skill == Skill.NKM) {
-
 		}
+		//		else if (skill == Skill.NKM) {
+		//
+		//		}
 	}
 
 	private int standbyFaze(Creature p1) {
