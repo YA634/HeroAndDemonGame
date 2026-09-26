@@ -290,24 +290,37 @@ public class Battle {
 		//ファーストスキル、特性
 		FirstSkill fsk = p1.getFirstSkill();
 		if (fsk == FirstSkill.BNS) {
+			System.out.println(p1.getName() + "の魂が燃え上がる！");
+			System.out.println("無限の力が湧いてくる！！");
 			p1.setBtlParam(Param.ATK, p1.getBtlParam().get(Param.ATK) * 2);
 			p1.setBtlParam(Param.DEF, p1.getBtlParam().get(Param.DEF) * 2);
 			p1.setBtlParam(Param.MAG, p1.getBtlParam().get(Param.MAG) * 2);
 			p1.setBtlParam(Param.SPD, p1.getBtlParam().get(Param.SPD) * 2);
 		} else if (fsk == FirstSkill.GYB) {
+			System.out.println("運命の女神が" + p1.getName() + "に祝福を与える！");
+			System.out.println(p1.getName() + "は自身の運命力に恍惚する！！");
 			p1.setBtlParam(Param.LUK, p1.getBtlParam().get(Param.LUK) + 50);
 		} else if (fsk == FirstSkill.MOU) {
+			System.out.println(p1.getName() + "が圧倒的な威圧を放つ！");
+			System.out.println(p1.getName() + "に力が満ちてゆく！");
 			p1.setBtlParam(Param.ATK, p1.getBtlParam().get(Param.ATK) * 2);
 			p1.setBtlParam(Param.DEF, p1.getBtlParam().get(Param.DEF) * 2);
 			p1.setBtlParam(Param.MAG, p1.getBtlParam().get(Param.MAG) * 2);
 			p1.setBtlParam(Param.SPD, p1.getBtlParam().get(Param.SPD) * 2);
 		} else if (fsk == FirstSkill.MGS) {
+			System.out.println(p1.getName() + "に過去の偉大な大魔導士たちが力を託す！");
+			System.out.println(p1.getName() + "は無限の魔力が湧いてきた！");
+			p1.setBtlParam(Param.DEF, p1.getBtlParam().get(Param.DEF) / 2);
 			p1.setBtlParam(Param.MP, p1.getBtlParam().get(Param.MP) + 1000);
 			p1.setBtlParam(Param.MAG, p1.getBtlParam().get(Param.MAG) * 4);
 		} else if (fsk == FirstSkill.HTT) {
+			System.out.println(p1.getName() + "に不退転の覚悟が満ちてゆく！");
+			System.out.println("動かざること山の如し。不動の姿、今見せん！！");
 			p1.setBtlParam(Param.DEF, p1.getBtlParam().get(Param.DEF) * 4);
 			p1.setGuts(1);
 		} else if (fsk == FirstSkill.HRS) {
+			System.out.println("勇者の覚悟が、勇者たる所以！");
+			System.out.println("長きにわたる魔王とのを終わらせる意志が" + p1.getName() + "をこの戦いへと導いた！！");
 			p1.setGuts(1);
 		}
 	}
@@ -427,6 +440,9 @@ public class Battle {
 			p.setBtlParam(Param.HP, 1);
 			p.setBtlParam(Param.DEF, p.getBtlParam().get(Param.DEF) * 10);
 			p.setGuts(0);
+		} else {
+			p.setBtlParam(Param.HP, 0);
+			p.setLive(false);
 		}
 	}
 
@@ -665,7 +681,12 @@ public class Battle {
 				}
 			}
 		}
-		if (turn == 5 && p1.getFirstSkill() == FirstSkill.MOU) {
+		if (p1.getFirstSkill() == FirstSkill.BNS) {
+			System.out.println("燃え上がる魂がその身を削る！！");
+			int dmg = p1.getBtlParam().get(Param.HP) / 10;
+			System.out.println(p1.getName() + "に" + dmg + "ダメージ");
+			p1.setBtlParam(Param.HP, p1.getBtlParam().get(Param.HP) - dmg);
+		} else if (turn == 5 && p1.getFirstSkill() == FirstSkill.MOU) {
 			System.out.println("魔王の威圧が弱まった！！");
 			p1.setBtlParam(Param.ATK, p1.getBtlParam().get(Param.ATK) / 2);
 			p1.setBtlParam(Param.DEF, p1.getBtlParam().get(Param.DEF) / 2);

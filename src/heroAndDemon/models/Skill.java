@@ -19,7 +19,7 @@ public enum Skill implements UsableSkill {
 	//	NKM("仲間をよぶ(50)(未実装)", SkillType.SPECIAL, 0, 0, 50, Attribute.NONE), //未実装
 	//	MTO("メテオ(50)(未実装)", SkillType.SPECIAL, 0, 1, 50, Attribute.NONE)//大小の隕石をよぶ、敵味方全体にダメージ
 	//  TGM("つるぎのまい(0)(未実装)", SkillType.SPECIAL, 20, 1, 0, Attribute.NONE),//4回攻撃
-	//案　仲間を呼ぶ　敵味方全員に付与する効果、ダメージ　自傷して強力なやつ
+	//案　仲間を呼ぶ　敵味方全員に付与する効果、ダメージ　自傷して強力なやつ ターン経過毎に強くなっていくやつ
 	;
 
 	private final String name;
