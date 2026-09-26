@@ -27,6 +27,10 @@ public class Creature {
 	private Map<Skill, Integer> efDulation = new HashMap<>();
 	//所持スキル
 	private Skill[] skillSet;
+	//ファーストスキル
+	private FirstSkill firstSkill;
+	//食いしばり
+	private int guts = 0;
 	//名前
 	private String name;
 
@@ -52,6 +56,10 @@ public class Creature {
 
 	public void setEfDulation(Skill skill, Integer num) {
 		this.efDulation.put(skill, num);
+	}
+
+	public void resetEfDulation() {
+		this.efDulation = new HashMap<>();
 	}
 
 	public void setBtlParam(Param p, Integer num) {
@@ -123,6 +131,14 @@ public class Creature {
 		this.skillSet = skillSet;
 	}
 
+	public FirstSkill getFirstSkill() {
+		return firstSkill;
+	}
+
+	public void setFirstSkill(FirstSkill firstSkill) {
+		this.firstSkill = firstSkill;
+	}
+
 	public void setCategory(Category category) {
 		this.category = category;
 	}
@@ -131,10 +147,19 @@ public class Creature {
 		return name;
 	}
 
+	public int getGuts() {
+		return guts;
+	}
+
+	public void setGuts(int guts) {
+		this.guts = guts;
+	}
+
 	public static Creature createDemon() {
 		Creature demon = new Creature(Creature.Category.DEMON, "魔王");
 		demon.setParameter(Category.DEMON);
 		Skill[] skills = new Skill[3];
+		FirstSkill firstSkill = FirstSkill.MOU;
 		Random r = new Random();
 		for (int i = 0; i < demon.getSkillSet().length; i++) {
 			skills[i] = Skill.values()[r.nextInt(Skill.values().length)];

@@ -9,11 +9,12 @@ import java.util.Random;
 import java.util.Set;
 
 import heroAndDemon.inputs.InputUtil;
+import heroAndDemon.models.Attribute;
 import heroAndDemon.models.Creature;
 import heroAndDemon.models.Creature.Param;
+import heroAndDemon.models.FirstSkill;
 import heroAndDemon.models.Skill;
-import heroAndDemon.models.Skill.Attribute;
-import heroAndDemon.models.Skill.SkillType;
+import heroAndDemon.models.SkillType;
 
 public class Battle {
 	public int start(Creature demon, String name) {
@@ -28,10 +29,24 @@ public class Battle {
 		hero.showParameter();
 		System.out.println("1:easy　2:hard");
 		int mode = input.readMenuChoice("モードを選択してください", 2);
-		System.out.println("== 取得可能なスキル ==");
 
 		if (mode == 0) {
 			//全ての選択肢から取得
+			System.out.println("== 取得可能なパッシブスキル ==");
+			List<FirstSkill> FSkillList = new ArrayList<>();
+			int indexNum1 = 0;
+			for (FirstSkill fsk : FirstSkill.values()) {
+				if (fsk == FirstSkill.MOU) {
+					continue;
+				}
+				indexNum1++;
+				FSkillList.add(fsk);
+				System.out.println(indexNum1 + ":" + fsk.getName());
+			}
+			FirstSkill fskSel = input.readSkill("取得するパッシブスキルを選択してください", FSkillList, mode);
+			hero.setFirstSkill(fskSel);
+
+			System.out.println("== 取得可能なスキル ==");
 			int indexNum = 0;
 			for (Skill skill : Skill.values()) {
 				if (skill == Skill.NGR || skill == Skill.MMR) {
@@ -48,6 +63,22 @@ public class Battle {
 			hero.setSkillSet(skillSet);
 		} else if (mode == 1) {
 			//		3つの選択肢から取得
+			System.out.println("== 取得可能なパッシブスキル ==");
+			List<FirstSkill> FSkillList = new ArrayList<>();
+			for (FirstSkill fsk : FirstSkill.values()) {
+				if (fsk == FirstSkill.MOU) {
+					continue;
+				}
+				FSkillList.add(fsk);
+			}
+			Collections.shuffle(FSkillList);
+			for (int i = 0; i < 3; i++) {
+				System.out.println((i + 1) + ":" + FSkillList.get(i).getName());
+			}
+			FirstSkill fskSel = input.readSkill("取得するパッシブスキルを選択してください", FSkillList, mode);
+			hero.setFirstSkill(fskSel);
+
+			System.out.println("== 取得可能なスキル ==");
 			Skill[] skillSet = new Skill[3];
 			List<Skill> skillList = new ArrayList<>();
 			for (Skill skill : Skill.values()) {
@@ -107,7 +138,8 @@ public class Battle {
 			if (hero.isLive()) {
 				//firstSkill
 				if (turn == 1) {
-					//demon.useSkill(firstSkill);
+					useFSkill(demon);
+					useFSkill(hero);
 				}
 				Creature p1 = spdJudge(hero, demon);
 				Creature p2;
@@ -186,8 +218,8 @@ public class Battle {
 				//					isLiveJudge(demon);
 				//				}
 				sleep(1);
-				endFaze(hero);
-				endFaze(demon);
+				endFaze(hero, turn);
+				endFaze(demon, turn);
 				isLiveJudge(hero);
 				isLiveJudge(demon);
 				hero.showParameter();
@@ -196,6 +228,9 @@ public class Battle {
 			}
 		}
 		if (!demon.isLive()) { //勇者勝ち
+			if (!hero.isLive()) {
+				return 5;
+			}
 			return 1;
 		} else if (!hero.isLive()) { //魔王勝ち
 			return 2;
@@ -230,6 +265,10 @@ public class Battle {
 					int dmg = dmgJudge(p1, p2, skill.getPower(), skill);
 					System.out.println(p2.getName() + "に" + dmg + "ダメージ！！");
 					p2.setBtlParam(Param.HP, p2.getBtlParam().get(Param.HP) - dmg);
+				} else if (skill.getType() == SkillType.MAGIC) {
+					int dmg = mDmgJudge(p1, p2, skill.getPower(), skill);
+					System.out.println(p2.getName() + "に" + dmg + "ダメージ！！");
+					p2.setBtlParam(Param.HP, p2.getBtlParam().get(Param.HP) - dmg);
 				} else if (skill.getType() == SkillType.HEAL) {
 					healAction(p1, skill);
 				} else if (skill.getType() == SkillType.BUFF) {
@@ -247,6 +286,32 @@ public class Battle {
 
 	private void useSkill(int skillNum, Creature p1, Creature[] creatures) {
 		//対複数　今後実装予定
+	}
+
+	private void useFSkill(Creature p1) {
+		//ファーストスキル、特性
+		FirstSkill fsk = p1.getFirstSkill();
+		if (fsk == FirstSkill.BNS) {
+			p1.setBtlParam(Param.ATK, p1.getBtlParam().get(Param.ATK) * 2);
+			p1.setBtlParam(Param.DEF, p1.getBtlParam().get(Param.DEF) * 2);
+			p1.setBtlParam(Param.MAG, p1.getBtlParam().get(Param.MAG) * 2);
+			p1.setBtlParam(Param.SPD, p1.getBtlParam().get(Param.SPD) * 2);
+		} else if (fsk == FirstSkill.GYB) {
+			p1.setBtlParam(Param.LUK, p1.getBtlParam().get(Param.LUK) + 50);
+		} else if (fsk == FirstSkill.MOU) {
+			p1.setBtlParam(Param.ATK, p1.getBtlParam().get(Param.ATK) * 2);
+			p1.setBtlParam(Param.DEF, p1.getBtlParam().get(Param.DEF) * 2);
+			p1.setBtlParam(Param.MAG, p1.getBtlParam().get(Param.MAG) * 2);
+			p1.setBtlParam(Param.SPD, p1.getBtlParam().get(Param.SPD) * 2);
+		} else if (fsk == FirstSkill.MGS) {
+			p1.setBtlParam(Param.MP, p1.getBtlParam().get(Param.MP) + 1000);
+			p1.setBtlParam(Param.MAG, p1.getBtlParam().get(Param.MAG) * 4);
+		} else if (fsk == FirstSkill.HTT) {
+			p1.setBtlParam(Param.DEF, p1.getBtlParam().get(Param.DEF) * 4);
+			p1.setGuts(1);
+		} else if (fsk == FirstSkill.HRS) {
+			p1.setGuts(1);
+		}
 	}
 
 	private void showMenu(int option, Creature hero) {
@@ -295,22 +360,23 @@ public class Battle {
 	}
 
 	private int dmgJudge(Creature p1, Creature p2, int option, Skill sk) {
-		//クリティカル、オーバークリティカルを追加
+		//ダメージ計算
 		Random r = new Random();
 		if (avoidJudge(p1, p2, 50)) {
 			System.out.println(p2.getName() + "は" + sk.getName() + "を避けた！");
 			return 0;
 		} else {
-			int cri = r.nextInt(10);
-			int oCri = r.nextInt(10);
+			int cri = r.nextInt(100) + 1;
+			int oCri = r.nextInt(100) + 1;
+			int pCri = p1.getBtlParam().get(Param.LUK);
 			int dmg;
-			if (cri == 0) {
-				if (oCri == 0) {
-					System.out.println("オーバークリティカル！！！");
+			if (cri <= pCri) {
+				if (oCri <= pCri - 100) {
+					System.out.println("OVER CRITICAL！！！");
 					dmg = (p1.getBtlParam().get(Param.ATK) + option + r.nextInt(100)) * 8
 							- p2.getBtlParam().get(Param.DEF);
 				} else {
-					System.out.println("クリティカル！！");
+					System.out.println("CRITICAL!!");
 					dmg = (p1.getBtlParam().get(Param.ATK) + option + r.nextInt(100)) * 4
 							- p2.getBtlParam().get(Param.DEF);
 				}
@@ -324,11 +390,43 @@ public class Battle {
 		}
 	}
 
+	private int mDmgJudge(Creature p1, Creature p2, int option, Skill sk) {
+		//魔法ダメージ計算
+		Random r = new Random();
+		if (avoidJudge(p1, p2, 50)) {
+			System.out.println(p2.getName() + "は" + sk.getName() + "を避けた！");
+			return 0;
+		} else {
+			int dmg = p1.getBtlParam().get(Param.MAG) * 3 / 2 + option + r.nextInt(100)
+					- p2.getBtlParam().get(Param.DEF);
+			if (dmg < 0) {
+				return 0;
+			}
+			return dmg;
+		}
+	}
+
 	private void isLiveJudge(Creature p) {
+
 		int hp = p.getBtlParam().get(Param.HP);
-		if (hp <= 0) {
+		if (hp <= 0 && p.getFirstSkill() != FirstSkill.HRS && p.getFirstSkill() != FirstSkill.HTT) {
 			p.setBtlParam(Param.HP, 0);
 			p.setLive(false);
+		} else if (hp <= 0 && p.getFirstSkill() == FirstSkill.HRS && p.getGuts() == 1) {
+			System.out.println("勇者の魂が震える！！");
+			p.resetEfDulation();
+			p.setBtlParam(Param.HP, p.getDftParam().get(Param.HP));
+			p.setBtlParam(Param.ATK, p.getDftParam().get(Param.ATK) * 2);
+			p.setBtlParam(Param.DEF, p.getDftParam().get(Param.DEF) / 2);
+			p.setBtlParam(Param.MAG, p.getDftParam().get(Param.MAG) * 2);
+			p.setBtlParam(Param.SPD, p.getDftParam().get(Param.SPD) * 2);
+			p.setBtlParam(Param.LUK, p.getBtlParam().get(Param.LUK) + 10);
+			p.setGuts(0);
+		} else if (hp <= 0 && p.getFirstSkill() == FirstSkill.HTT && p.getGuts() == 1) {
+			System.out.println("不退転の覚悟がその身を現世に止まらせる！！");
+			p.setBtlParam(Param.HP, 1);
+			p.setBtlParam(Param.DEF, p.getBtlParam().get(Param.DEF) * 10);
+			p.setGuts(0);
 		}
 	}
 
@@ -352,6 +450,7 @@ public class Battle {
 		Map<Param, Integer> btP = p.getBtlParam();
 		if (sk.getAtrbt() == Attribute.ATKBF) {
 			p.setBtlParam(Param.ATK, btP.get(Param.ATK) * sk.getPower());
+			p.setBtlParam(Param.MAG, btP.get(Param.MAG) * sk.getPower());
 			p.setEfDulation(sk, sk.getDulation());
 		} else if (sk.getAtrbt() == Attribute.DEFBF) {
 			p.setBtlParam(Param.DEF, btP.get(Param.DEF) * sk.getPower());
@@ -367,6 +466,7 @@ public class Battle {
 		} else {
 			if (sk.getAtrbt() == Attribute.ATKDBF) {
 				p2.setBtlParam(Param.ATK, btP.get(Param.ATK) / sk.getPower());
+				p2.setBtlParam(Param.MAG, btP.get(Param.MAG) / sk.getPower());
 				p2.setEfDulation(sk, sk.getDulation());
 			} else if (sk.getAtrbt() == Attribute.DEFDBF) {
 				p2.setBtlParam(Param.DEF, btP.get(Param.DEF) / sk.getPower());
@@ -397,6 +497,10 @@ public class Battle {
 				System.out.println(p2.getName() + "は混乱状態になってしまった！");
 				p2.setEfDulation(sk, sk.getDulation());
 			}
+		} else if (sk.getAtrbt() == Attribute.DEATH) {
+			System.out.println(sk.getName() + "は避けられない...");
+			System.out.println(p2.getName() + "は死の宣告を受けた！");
+			p2.setEfDulation(sk, sk.getDulation());
 		}
 	}
 
@@ -414,6 +518,20 @@ public class Battle {
 	private void specialAction(Creature p1, Creature p2, Skill skill) {
 		if (skill == Skill.PPT) {
 			System.out.println("ランダムな効果が発生！");
+		} else if (skill == Skill.MDT) {
+			int dmg = dmgJudge(p1, p2, p1.getBtlParam().get(Param.MP) * 2, skill);
+			System.out.println(p1.getName() + "は全てのMPを使った！");
+			System.out.println(p2.getName() + "に" + dmg + "ダメージ！！");
+			p1.setBtlParam(Param.MP, 0);
+			p2.setBtlParam(Param.HP, p2.getBtlParam().get(Param.HP) - dmg);
+		} else if (skill == Skill.MGT) {
+			int dmg = dmgJudge(p1, p2, p1.getBtlParam().get(Param.HP) * 3, skill);
+			System.out.println(p1.getName() + "は自身の命を捧げた！");
+			System.out.println(p2.getName() + "に" + dmg + "ダメージ！！");
+			p1.setBtlParam(Param.HP, 0);
+			p2.setBtlParam(Param.HP, p2.getBtlParam().get(Param.HP) - dmg);
+		} else if (skill == Skill.NKM) {
+
 		}
 	}
 
@@ -437,7 +555,7 @@ public class Battle {
 		}
 	}
 
-	private void endFaze(Creature p1) {
+	private void endFaze(Creature p1, int turn) {
 		Map<Skill, Integer> pEfD = p1.getEfDulation();
 		Set<Skill> pSkills = pEfD.keySet();
 		Iterator<Skill> it = pEfD.keySet().iterator();
@@ -494,15 +612,61 @@ public class Battle {
 					pEfD.put(sk, du - 1);
 					System.out.println(p1.getName() + "はまだ混乱している！");
 				}
-			} else if (atrbt == Attribute.ATKBF || atrbt == Attribute.DEFBF || atrbt == Attribute.ATKDBF
-					|| atrbt == Attribute.DEFDBF) {
+			} else if (atrbt == Attribute.ATKBF) {
 				if (du == 0) {
 					it.remove();
+					p1.setBtlParam(Param.ATK,
+							p1.getBtlParam().get(Param.ATK) - p1.getDftParam().get(Param.ATK) * (sk.getPower() - 1));
+					p1.setBtlParam(Param.MAG,
+							p1.getBtlParam().get(Param.MAG) - p1.getDftParam().get(Param.MAG) * (sk.getPower() - 1));
 					System.out.println(p1.getName() + "は" + sk.getName() + "の効果が消えた！");
 				} else {
 					pEfD.put(sk, du - 1);
 				}
+			} else if (atrbt == Attribute.DEFBF) {
+				if (du == 0) {
+					it.remove();
+					p1.setBtlParam(Param.DEF,
+							p1.getBtlParam().get(Param.DEF) - p1.getDftParam().get(Param.DEF) * (sk.getPower() - 1));
+					System.out.println(p1.getName() + "は" + sk.getName() + "の効果が消えた！");
+				} else {
+					pEfD.put(sk, du - 1);
+				}
+			} else if (atrbt == Attribute.ATKDBF) {
+				if (du == 0) {
+					it.remove();
+					p1.setBtlParam(Param.ATK, p1.getBtlParam().get(Param.ATK) * sk.getPower());
+					p1.setBtlParam(Param.MAG, p1.getBtlParam().get(Param.MAG) * sk.getPower());
+					System.out.println(p1.getName() + "は" + sk.getName() + "の効果が消えた！");
+				} else {
+					pEfD.put(sk, du - 1);
+				}
+			} else if (atrbt == Attribute.DEFDBF) {
+				if (du == 0) {
+					it.remove();
+					p1.setBtlParam(Param.DEF, p1.getBtlParam().get(Param.DEF) * sk.getPower());
+					System.out.println(p1.getName() + "は" + sk.getName() + "の効果が消えた！");
+				} else {
+					pEfD.put(sk, du - 1);
+				}
+			} else if (atrbt == Attribute.DEATH) {
+				if (du == 0) {
+					it.remove();
+					System.out.println("死の宣告が実現する...");
+					System.out.println(p1.getName() + "のHPは0になった...");
+					p1.setBtlParam(Param.HP, 0);
+				} else {
+					pEfD.put(sk, du - 1);
+					System.out.println(p1.getName() + "の宣告された死まであと " + pEfD.get(sk) + "ターン...");
+				}
 			}
+		}
+		if (turn == 5 && p1.getFirstSkill() == FirstSkill.MOU) {
+			System.out.println("魔王の威圧が弱まった！！");
+			p1.setBtlParam(Param.ATK, p1.getBtlParam().get(Param.ATK) / 2);
+			p1.setBtlParam(Param.DEF, p1.getBtlParam().get(Param.DEF) / 2);
+			p1.setBtlParam(Param.MAG, p1.getBtlParam().get(Param.MAG) / 2);
+			p1.setBtlParam(Param.SPD, p1.getBtlParam().get(Param.SPD) / 2);
 		}
 	}
 

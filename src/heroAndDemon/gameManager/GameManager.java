@@ -61,6 +61,10 @@ public class GameManager {
 			System.out.println("チーン");
 			System.out.println("勇者" + name + "は命を落とした...");
 			System.out.println("世界は魔王に支配され、深い暗黒に包まれた...");
+		} else if (btlResult == 5) {
+			System.out.println("...");
+			System.out.println("魔王は打ち倒され、世界に平和が戻った。");
+			System.out.println("しかし、その祝福に勇者が答えることはもうなかった...");
 		}
 	}
 }

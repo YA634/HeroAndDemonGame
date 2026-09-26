@@ -4,6 +4,7 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
+import heroAndDemon.models.FirstSkill;
 import heroAndDemon.models.Skill;
 
 public class InputUtil {
@@ -21,7 +22,7 @@ public class InputUtil {
 				if (index >= 0 && index < Skill.values().length) {
 					return Skill.values()[index + 2];
 				}
-				System.out.println("1~" + (Skill.values().length) + "までの数字を入力してください");
+				System.out.println("1~" + (Skill.values().length - 1) + "までの数字を入力してください");
 			} catch (InputMismatchException e) {
 				// TODO: handle exception
 				System.out.println("数字を入力してください");
@@ -39,6 +40,30 @@ public class InputUtil {
 					return skList.get(index);
 				}
 				System.out.println("1~3までの数字を入力してください");
+			} catch (InputMismatchException e) {
+				// TODO: handle exception
+				System.out.println("数字を入力してください");
+				scan.nextLine(); // 無効な入力をバッファから読み捨てる
+			}
+		}
+	}
+
+	public FirstSkill readSkill(String prompt, List<FirstSkill> FSkillList, int mode) {
+		while (true) {
+			System.out.println(prompt);
+			int index = scan.nextInt() - 1;
+			try {
+				if (mode == 0) {
+					if (index >= 0 && index < FSkillList.size()) {
+						return FSkillList.get(index);
+					}
+					System.out.println("1~" + (FirstSkill.values().length) + "までの数字を入力してください");
+				} else if (mode == 1) {
+					if (index >= 0 && index < 3) {
+						return FSkillList.get(index);
+					}
+					System.out.println("1~3までの数字を入力してください");
+				}
 			} catch (InputMismatchException e) {
 				// TODO: handle exception
 				System.out.println("数字を入力してください");
