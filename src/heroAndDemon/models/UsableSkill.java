@@ -12,4 +12,6 @@ public interface UsableSkill {
 	int getUseMP();
 
 	Attribute getAtrbt();
+
+	Target getTarget();
 }

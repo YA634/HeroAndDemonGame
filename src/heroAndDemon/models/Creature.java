@@ -1,14 +1,34 @@
 package heroAndDemon.models;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 public class Creature {
 	public enum Category {
+		HERO, DEMON, SERVANTH, SERVANTD
+	}
+
+	//simobeを追加
+	public enum Jinei {
 		HERO, DEMON
 	}
-	//simobeを追加
+
+	public enum ServantName {
+		スライム("スライム"),
+		;
+
+		private final String name;
+
+		private ServantName(String name) {
+			this.name = name;
+		}
+
+		public String getName() {
+			return name;
+		}
+	}
 
 	//勇者か魔王か
 	private Category category;
@@ -33,6 +53,10 @@ public class Creature {
 	private int guts = 0;
 	//名前
 	private String name;
+	//下僕の名前
+	private int servantNum;
+	//陣営
+	private Jinei jinei;
 
 	public Creature(Category category, String name) {
 		super();
@@ -40,6 +64,10 @@ public class Creature {
 		this.skillSet = new Skill[3];
 		this.isLive = true;
 		this.name = name;
+	}
+
+	public Category getCategory() {
+		return category;
 	}
 
 	public Map<Param, Integer> getDftParam() {
@@ -79,6 +107,7 @@ public class Creature {
 	}
 
 	public void setParameter(Category category) {
+		//勇者と魔王のパラム設定
 		Random random = new Random();
 		if (category == Category.DEMON) {
 			Map<Param, Integer> parameterD = new HashMap<>();
@@ -112,6 +141,24 @@ public class Creature {
 			}
 			this.dftParam = parameterH;
 			this.btlParam = new HashMap<>(parameterH);
+		}
+	}
+
+	public void setParameter(String name) {
+		//下僕のパラム設定
+		Random random = new Random();
+		Map<Param, Integer> parameterS = new HashMap<>();
+		if (name.equals("スライム")) {
+			parameterS = new HashMap<>(Map.of(
+					Param.HP, random.nextInt(400) + 200,
+					Param.MP, random.nextInt(400) + 200,
+					Param.ATK, random.nextInt(20) + 30,
+					Param.DEF, random.nextInt(20) + 30,
+					Param.SPD, random.nextInt(20) + 30,
+					Param.MAG, random.nextInt(20) + 30,
+					Param.LUK, random.nextInt(20) + 30));
+			this.dftParam = parameterS;
+			this.btlParam = new HashMap<>(parameterS);
 		}
 	}
 
@@ -155,6 +202,30 @@ public class Creature {
 		this.guts = guts;
 	}
 
+	public Jinei getJinei() {
+		return jinei;
+	}
+
+	public void setJinei(Jinei jinei) {
+		this.jinei = jinei;
+	}
+
+	public int getServantNum() {
+		return servantNum;
+	}
+
+	public void setServantNum(int servantNum) {
+		this.servantNum = servantNum;
+	}
+
+	public String getServantName() {
+		if (this.category == Category.DEMON || this.category == Category.HERO) {
+			return this.name;
+		} else {
+			return this.name + this.servantNum;
+		}
+	}
+
 	public static Creature createDemon() {
 		Creature demon = new Creature(Creature.Category.DEMON, "魔王");
 		demon.setParameter(Category.DEMON);
@@ -165,13 +236,42 @@ public class Creature {
 			skills[i] = Skill.values()[r.nextInt(Skill.values().length)];
 		}
 		demon.setSkillSet(skills);
+		demon.setJinei(Jinei.DEMON);
 		return demon;
 	}
 
 	public static Creature createHero(String name) {
 		Creature hero = new Creature(Creature.Category.HERO, name);
 		hero.setParameter(Category.HERO);
+		hero.setJinei(Jinei.HERO);
 		return hero;
+	}
+
+	public static Creature createServant(Creature p, ServantName sevName, List<Creature> servants) {
+		Random r = new Random();
+		Creature servant = null;
+		String name = sevName.getName();
+		if (p.getJinei() == Jinei.DEMON) {
+			servant = new Creature(Creature.Category.SERVANTD, name);
+		} else if (p.getJinei() == Jinei.HERO) {
+			servant = new Creature(Creature.Category.SERVANTH, name);
+		}
+		servant.setParameter(name);
+		int sevCount = 1;
+		for (Creature sev : servants) {
+			if (sev.getName().equals(name)) {
+				sevCount += 1;
+			}
+		}
+		servant.setServantNum(sevCount);
+		if (name.equals("スライム")) {
+			Skill[] sks = new Skill[1];
+			for (int i = 0; i < servant.getSkillSet().length; i++) {
+				sks[i] = Skill.values()[r.nextInt(Skill.values().length)];
+			}
+			servant.setSkillSet(sks);
+		}
+		return servant;
 	}
 
 	public void showAA(String category) {
